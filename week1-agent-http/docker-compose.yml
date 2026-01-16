@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # 서버 역할 (Agent B)
+  agent_b:
+    build: ./agent_b
+    container_name: agent_b_container
+    networks:
+      - agent_network
+
+  # 클라이언트 역할 (Agent A)
+  agent_a:
+    build: ./agent_a
+    container_name: agent_a_container
+    depends_on:
+      - agent_b  # B가 먼저 실행된 후 A가 실행되도록 설정
+    networks:
+      - agent_network
+
+networks:
+  agent_network:
+    driver: bridge

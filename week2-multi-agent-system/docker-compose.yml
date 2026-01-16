@@ -1,0 +1,28 @@
+services:
+  tool_server:
+    build: ./tool_server
+    ports:
+      - "8000:8000"  # 와이어샤크 캡처를 위해 포트 노출
+    volumes:
+      - ./data:/data  # 로컬 data 폴더 연결
+    # 윈도우/맥 환경에서 loopback 캡처를 위해 호스트 네트워크와 연결
+  
+  agent_b:
+    build: ./agent_b
+    ports:
+      - "8001:8001"  # 와이어샤크 캡처를 위해 포트 노출
+    command: uvicorn agent_b:app --host 0.0.0.0 --port 8001
+    depends_on:
+      - tool_server
+    cap_add:
+      - NET_ADMIN
+
+
+  agent_a:
+    build: ./agent_a
+    environment:
+      - PROMPT=echo hello
+    depends_on:
+      - agent_b
+
+  
